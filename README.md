@@ -1,7 +1,7 @@
 # Cirq's Neovim config (fork of kickstart.nvim)
 ## some basic stuff
-- `<Space>` is the leader key
-- which-key is included in the config, which makes finding the keybinds much easier in case you forgot
+- `<space>` is the leader key
+- which-key is included in the config, which makes finding keybinds much easier
 - the installation is very simple:
 1- `git clone https://github.com/Cixqq/nvim ~/.config/nvim` (note: the config folder location may vary from OS to OS, currently I'm using Linux so my config folder location is `~/.config/nvim`)
 2- install some dependencies by using the following command: `sudo pacman -S fzf && sudo pacman -S ripgrep`
