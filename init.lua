@@ -110,6 +110,10 @@ vim.opt.mouse = 'a'
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
+-- "Fake" disabling netrw in favor of neotree
+vim.g.loaded_netrwPlugin = 1
+vim.g.loaded_netrw = 1
+
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
@@ -194,7 +198,7 @@ vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower win
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- my own mappings lol
-vim.keymap.set('n', '<C-n>', vim.cmd.Ex, { desc = 'Opens up the file explorer' })
+vim.keymap.set('n', '<C-n>', vim.cmd.Neotree, { desc = 'Opens up the file explorer' })
 vim.keymap.set('i', 'jk', '<Esc>')
 vim.keymap.set('i', 'jj', '<Esc>')
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
@@ -297,6 +301,7 @@ require('lazy').setup({
       require('which-key').register {
         ['<leader>c'] = { name = '[C]ode', _ = 'which_key_ignore' },
         ['<leader>d'] = { name = '[D]ocument', _ = 'which_key_ignore' },
+        ['<leader>h'] = { name = '[H]arpoon', _ = 'which_key_ignore' },
         ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
@@ -860,58 +865,61 @@ require('lazy').setup({
       local harpoon = require 'harpoon'
 
       harpoon:setup {}
-      vim.keymap.set('n', '<leader>a', function()
+      vim.keymap.set('n', '<leader>ha', function()
         harpoon:list():add()
-      end, { desc = 'Harpoon: Append current file' })
+      end, { desc = '[H]arpoon: [A]ppend current file' })
+      vim.keymap.set('n', '<leader>hd', function()
+        harpoon:list():remove()
+      end, { desc = '[H]arpoon: [D]elete current file' })
       vim.keymap.set('n', '<C-e>', function()
         harpoon.ui:toggle_quick_menu(harpoon:list())
       end, { desc = 'Harpoon: Show mark list' })
 
-      -- Only gigachads use Dvorak (TODO: Try Dvorak or Colemak)
-      vim.keymap.set('n', '<C-h>', function()
+      vim.keymap.set('n', '<C-l>', function()
         harpoon:list():select(1)
       end, { desc = 'Harpoon: Jump to mark 1' })
-      vim.keymap.set('n', '<C-j>', function()
+      vim.keymap.set('n', '<C-k>', function()
         harpoon:list():select(2)
       end, { desc = 'Harpoon: Jump to mark 2' })
-      vim.keymap.set('n', '<C-k>', function()
+      vim.keymap.set('n', '<C-j>', function()
         harpoon:list():select(3)
       end, { desc = 'Harpoon: Jump to mark 3' })
-      vim.keymap.set('n', '<C-l>', function()
+      vim.keymap.set('n', '<C-h>', function()
         harpoon:list():select(4)
       end, { desc = 'Harpoon: Jump to mark 4' })
 
-      -- basic telescope configuration
-      local conf = require('telescope.config').values
-      local function toggle_telescope(harpoon_files)
-        local file_paths = {}
-        for _, item in ipairs(harpoon_files.items) do
-          table.insert(file_paths, item.value)
-        end
-
-        require('telescope.pickers')
-          .new({}, {
-            prompt_title = 'Harpoon',
-            finder = require('telescope.finders').new_table {
-              results = file_paths,
-            },
-            previewer = conf.file_previewer {},
-            sorter = conf.generic_sorter {},
-          })
-          :find()
-      end
-
-      vim.keymap.set('n', '<C-e>', function()
-        toggle_telescope(harpoon:list())
-      end, { desc = 'Open harpoon window' })
+      -- <C-S-...> means Ctrl+Shift+... (in case I forgot)
+      -- Toggle previous & next buffers stored within Harpoon list
+      vim.keymap.set('n', '<C-S-P>', function()
+        harpoon:list():prev()
+      end)
+      vim.keymap.set('n', '<C-S-N>', function()
+        harpoon:list():next()
+      end)
     end,
   },
 
   {
     'echasnovski/mini.pairs',
-    version = false,
     config = function()
       require('mini.pairs').setup()
+    end,
+  },
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-tree/nvim-web-devicons', -- not strictly required, but recommended
+      'MunifTanjim/nui.nvim',
+      '3rd/image.nvim', -- Optional image support in preview window: See `# Preview Mode` for more information
+    },
+    config = function()
+      require('neo-tree').setup {
+        window = {
+          position = 'current',
+        },
+      }
     end,
   },
 
