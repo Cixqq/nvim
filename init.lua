@@ -110,6 +110,11 @@ vim.opt.mouse = 'a'
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
 
+-- setting indentation to 4 spaces
+vim.opt.expandtab = true
+vim.opt.ts = 4
+vim.opt.sw = 4
+
 -- "Fake" disabling netrw in favor of neotree
 vim.g.loaded_netrwPlugin = 1
 vim.g.loaded_netrw = 1
