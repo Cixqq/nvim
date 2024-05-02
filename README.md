@@ -46,7 +46,7 @@ Ubuntu: `sudo add-apt-repository ppa:neovim-ppa/unstable -y && sudo apt install 
 | Windows (cmd)| `%userprofile%\AppData\Local\nvim\` |
 | Windows (powershell)| `$env:USERPROFILE\AppData\Local\nvim\` |
 
-## basic keybinds
+## basic keymaps
 - `Ctrl+N` toggles NeoTree (file explorer)
 - `<leader>s` is used to search for something, there are multiple search options
 - `jj` or `jk` are mapped to the `<Esc>` (escape key), they can be used to switch from insert mode to normal mode
