@@ -64,7 +64,7 @@ end
 ---@type vim.lsp.Config
 return {
     cmd = { 'clangd' },
-    extra_args = { '--fallback-style=llvm', '-std=c++23' },
+    extra_args = { '--fallback-style=llvm' },
     filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda' },
     root_markers = {
         '.clangd',
