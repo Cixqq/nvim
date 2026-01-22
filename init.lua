@@ -33,16 +33,17 @@ vim.o.completeopt = "fuzzy,nosort,menuone,noselect,noinsert"
 vim.o.pumheight = 10
 vim.o.pumwidth = 5
 
-local function map(mappings)
-    for mode, value in pairs(mappings) do
-        for _, mapping in ipairs(value) do
-            local lhs, rhs, opts = mapping[1], mapping[2], mapping[3]
+-- Keymaps.
+local function map(keymaps)
+    for mode, value in pairs(keymaps) do
+        for _, keymap in ipairs(value) do
+            local lhs, rhs, opts = keymap[1], keymap[2], keymap[3]
             vim.keymap.set(mode, lhs, rhs, opts)
         end
     end
 end
 
-local mappings = {
+local keymaps = {
     ["n"] = {
         -- General keymaps.
         { "<Esc>",            ":nohlsearch<CR>",                  { desc = "Removes search highlight.", silent = true } },
@@ -116,7 +117,7 @@ local mappings = {
         { "<Esc><Esc>", "<C-\\><C-n>", { desc = "Escapes from terminal to normal mode." } },
     },
 }
-map(mappings)
+map(keymaps)
 
 -- Autocmds.
 local autocmd = vim.api.nvim_create_autocmd
@@ -207,12 +208,6 @@ vim.lsp.enable({ "lua_ls", "clangd", "pyright", "gopls" })
 require("oil").setup()
 require("nvim-ts-autotag").setup()
 require("nvim-autopairs").setup()
-require("gruvbox").setup({
-    italic = {
-        strings = false,
-        comments = false,
-    }
-})
 
 local height = math.floor(0.618 * vim.o.lines)
 local width = math.floor(0.618 * vim.o.columns)
@@ -274,7 +269,16 @@ vim.o.statusline = table.concat {
 }
 
 -- Colorscheme.
-vim.cmd([[
-    colorscheme gruvbox
-    hi statusline guibg=NONE
-]])
+require("gruvbox").setup({
+    italic = {
+        strings = false,
+        comments = false,
+    },
+    overrides = {
+        TabLineFill = { bg = "#282828" },
+        TabLineSel = { fg = "#ebdbb2" },
+        SignColumn = { bg = "#282828" },
+        StatusLine = { bg = "#282828" }
+    }
+})
+vim.cmd([[colorscheme gruvbox]])
