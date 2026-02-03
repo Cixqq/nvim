@@ -32,6 +32,7 @@ vim.o.showtabline = 2
 vim.o.completeopt = "fuzzy,nosort,menuone,noselect,noinsert"
 vim.o.pumheight = 10
 vim.o.pumwidth = 5
+vim.o.path = ",**"
 
 -- Keymaps.
 local function map(keymaps)
@@ -72,9 +73,8 @@ local keymaps = {
         -- Tab keymaps.
         { "<Tab>",            "gt",                               { desc = "Goes to next tab." } },
         { "<S-Tab>",          "gT",                               { desc = "Goes to previous tab." } },
-        { "<leader>tn",       ":tab new<CR>",                     { desc = "Makes a new tab.", silent = true } },
-        { "<leader>ttn",      ":tab term<CR>",                    { desc = "Spawns a terminal in a new tab.", silent = true } },
-        { "<leader>tt",       ":term<CR>",                        { desc = "Spawns a terminal in the current tab/pane.", silent = true } },
+        { "<C-t>",            ":tab new<CR>",                     { desc = "Makes a new tab.", silent = true } },
+        { "<leader>t",        ":term<CR>",                        { desc = "Spawns a terminal in the current tab/pane.", silent = true } },
 
         -- LSP keymaps.
         { "<leader>f",        vim.lsp.buf.format,                 { desc = "Formats current buffer." } },
@@ -153,6 +153,17 @@ autocmd("LspAttach", {
             client.server_capabilities.completionProvider.triggerCharacters = chars
             vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
             local _map = vim.keymap.set
+            _map("i", "<CR>", function()
+                    if pumvisible() then
+                        feedkeys "<CR><CR>"
+                    else
+                        feedkeys "<CR>"
+                    end
+                end,
+                {
+                    desc =
+                    "When pressing enter while autocomplete popup is active it closes the popup without going to a newline. This keymap changes this behavior."
+                })
             _map("i", "<C-Space>", function()
                 if pumvisible() then
                     feedkeys "<C-e>"
@@ -167,17 +178,22 @@ autocmd("LspAttach", {
                         end
                     end
                 end
-            end, { silent = true })
+            end, { desc = "Toggles autocomplete.", silent = true })
             _map("i", "<C-y>", function()
-                if pumvisible() then
-                    local ci = vim.fn.complete_info()
-                    if ci.selected == -1 then
-                        return feedkeys "<C-n><C-y>"
-                    else
-                        return feedkeys "<C-y>"
+                    if pumvisible() then
+                        local ci = vim.fn.complete_info()
+                        if ci.selected == -1 then
+                            return feedkeys "<C-n><C-y>"
+                        else
+                            return feedkeys "<C-y>"
+                        end
                     end
-                end
-            end, { silent = true })
+                end,
+                {
+                    desc =
+                    "Accepts selected entry in the autocomplete. If no entry is selected then the first entry is automatically selected.",
+                    silent = true
+                })
         end
 
         -- Auto-format ("lint") on save.
@@ -186,6 +202,7 @@ autocmd("LspAttach", {
             and client:supports_method("textDocument/formatting") then
             vim.api.nvim_create_autocmd("BufWritePre", {
                 buffer = args.buf,
+                desc = "Auto format.",
                 callback = function()
                     vim.lsp.buf.format({ bufnr = args.buf, id = client.id, timeout_ms = 1000 })
                 end,
@@ -217,7 +234,7 @@ require("fzf-lua").setup({
         width = width,
         row = math.floor(0.5 * (vim.o.lines - height)),
         col = math.floor(0.5 * (vim.o.columns - width)),
-        border = "bold",
+        border = "bold", -- For some reason it doesn't respect `vim.o.winborder` lmao.
         backdrop = 100,
         preview = {
             hidden = true,
@@ -237,7 +254,7 @@ require("fzf-lua").setup({
     },
     fzf_opts = {
         ["--prompt"] = "> ",
-        ["--pointer"] = "> ",
+        ["--pointer"] = ">>",
     }
 })
 
@@ -275,10 +292,11 @@ require("gruvbox").setup({
         comments = false,
     },
     overrides = {
-        TabLineFill = { bg = "#282828" },
         TabLineSel = { fg = "#ebdbb2" },
-        SignColumn = { bg = "#282828" },
-        StatusLine = { bg = "#282828" }
+        TabLineFill = { bg = "NONE" },
+        SignColumn = { bg = "NONE" },
+        StatusLine = { bg = "NONE" },
+        NormalFloat = { bg = "NONE" }
     }
 })
 vim.cmd([[colorscheme gruvbox]])
