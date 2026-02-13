@@ -67,8 +67,8 @@ local keymaps = {
         { "<A-j>",            ":resize -2<CR>",                   { desc = "Resizes a pane vertically downwards.", silent = true } },
         { "<A-k>",            ":resize +2<CR>",                   { desc = "Resizes a pane vertically upwards.", silent = true } },
         { "<A-l>",            ":vertical resize +2<CR>",          { desc = "Resizes a pan horizontally from the right.", silent = true } },
-        { "<leader>|",        ":vsplit<CR><C-w>w",                { desc = "Splits the window vertically.", silent = true } },
-        { "<leader>-",        ":split<CR><C-w>w",                 { desc = "Splits the windows horizontally.", silent = true } },
+        { "<leader>v",        ":vsplit<CR>",                      { desc = "Splits the window vertically.", silent = true } },
+        { "<leader>h",        ":split<CR>",                       { desc = "Splits the windows horizontally.", silent = true } },
 
         -- Tab keymaps.
         { "<Tab>",            "gt",                               { desc = "Goes to next tab." } },
@@ -153,17 +153,6 @@ autocmd("LspAttach", {
             client.server_capabilities.completionProvider.triggerCharacters = chars
             vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
             local _map = vim.keymap.set
-            _map("i", "<CR>", function()
-                    if pumvisible() then
-                        feedkeys "<CR><CR>"
-                    else
-                        feedkeys "<CR>"
-                    end
-                end,
-                {
-                    desc =
-                    "When pressing enter while autocomplete popup is active it closes the popup without going to a newline. This keymap changes this behavior."
-                })
             _map("i", "<C-Space>", function()
                 if pumvisible() then
                     feedkeys "<C-e>"
@@ -217,14 +206,13 @@ vim.pack.add({
     "https://github.com/ibhagwan/fzf-lua",
     "https://github.com/stevearc/oil.nvim",
     "https://github.com/windwp/nvim-ts-autotag",
-    "https://github.com/windwp/nvim-autopairs",
 })
 
 vim.lsp.enable({ "lua_ls", "clangd", "pyright", "gopls" })
 
 require("oil").setup()
 require("nvim-ts-autotag").setup()
-require("nvim-autopairs").setup()
+require("plugin/autoclose").setup()
 
 local height = math.floor(0.618 * vim.o.lines)
 local width = math.floor(0.618 * vim.o.columns)
@@ -250,6 +238,9 @@ require("fzf-lua").setup({
             -- Disabling multi selection. (Personally I don't see any use for it, for now at least.)
             ["Tab"]       = "toggle-preview",
             ["shift-tab"] = "",
+
+            -- Sending the results over to the quickfix.
+            ["ctrl-q"]    = "select-all+accept",
         }
     },
     fzf_opts = {
@@ -292,8 +283,7 @@ require("gruvbox").setup({
         comments = false,
     },
     overrides = {
-        TabLineSel = { fg = "#ebdbb2" },
-        TabLineFill = { bg = "NONE" },
+        TabLineSel = { bg = "#a89984", fg = "#282828" },
         SignColumn = { bg = "NONE" },
         StatusLine = { bg = "NONE" },
         NormalFloat = { bg = "NONE" }

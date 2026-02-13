@@ -1,2 +1,4 @@
 nvim-pack-lock.json
-plugin/
+
+# Custom unfinished plugin.
+plugin/ff.lua
