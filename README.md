@@ -34,7 +34,6 @@ Managed via `vim.pack`:
 -   `fzf-lua`
 -   `oil.nvim`
 -   `nvim-ts-autotag`
--   `nvim-autopairs`
 
 ## Keymaps (Highlights)
 -   `<Space>` — leader key
