@@ -53,6 +53,7 @@ local keymaps = {
         { "<leader>d",        "\"_dd",                            { desc = "Prevents cutting to clipboard." } },
         { "<leader>",         "",                                 { desc = "For some reason space goes to the second line. This is a hacky fix." } },
         { "<leader>o",        ":w<CR> :source<CR>",               { desc = "Saves and reloads config." } },
+        { "<leader>c",        ":new | term ",                     { desc = "Replicating Emacs \"Compilation Mode\"." } },
 
         -- File traversal keymaps.
         { "<C-d>",            "<C-d>zz",                          { desc = "Scrolls down." } },
